@@ -632,26 +632,16 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ['ts_ls'] = {
-          -- 1. Import Mason Registry
-          local mason_registry = require 'mason-registry'
-          local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
-
-          -- 2. import lspconfig
-          local lspconfig = require 'lspconfig'
-
-          -- 3. Configure ts_ls for TypeScript and Vue
-          lspconfig.ts_ls.setup {
-            init_options = {
-              plugins = {
-                {
-                  name = '@vue/typescript-plugin',
-                  location = vue_language_server_path,
-                  languages = { 'vue' },
-                },
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = '',
+                languages = { 'vue' },
               },
             },
-            filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-          }
+          },
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         lua_ls = {
           -- cmd = {...},
@@ -688,6 +678,15 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            -- Special handling for ts_ls
+            if server_name == 'ts_ls' then
+              local mason_registry = require 'mason-registry'
+              local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+
+              -- Update the plugins location in the existing config
+              servers.ts_ls.init_options.plugins[1].location = vue_language_server_path
+            end
+
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -851,7 +850,28 @@ require('lazy').setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
-          { name = 'nvim_lsp' },
+          {
+            name = 'nvim_lsp',
+            ---@param entry cmp.Entry
+            ---@param ctx cmp.Context
+            entry_filter = function(entry, ctx)
+              -- Check if the buffer type is 'vue'
+              if ctx.filetype ~= 'vue' then
+                return true
+              end
+
+              local cursor_before_line = ctx.cursor_before_line
+              -- For events
+              if cursor_before_line:sub(-1) == '@' then
+                return entry.completion_item.label:match '^@'
+                -- For props also exclude events with `:on-` prefix
+              elseif cursor_before_line:sub(-1) == ':' then
+                return entry.completion_item.label:match '^:' and not entry.completion_item.label:match '^:on%-'
+              else
+                return true
+              end
+            end,
+          },
           { name = 'luasnip' },
           { name = 'path' },
         },
