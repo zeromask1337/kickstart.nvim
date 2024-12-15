@@ -32,4 +32,7 @@ vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
 
+-- Set UI language
+vim.cmd 'language en_US'
+
 return {} -- Return empty table for consistency
