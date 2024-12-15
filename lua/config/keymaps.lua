@@ -29,4 +29,9 @@ map('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 map('n', '<C-M-j>', '<cmd>cnext<CR>')
 map('n', '<C-M-k>', '<cmd>cprev<CR>')
 
+-- Debugging nvim config
+map('n', '<space><space>x', '<cmd>source %<CR>', { desc = 'Reload current file' })
+map('n', '<space>x', ':lua<CR>', { desc = 'Execute current line' })
+map('v', '<space>x', ':lua<CR>', { desc = 'Exectute selected code in lua' })
+
 return {} -- Return empty table for consistency
