@@ -797,7 +797,13 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
+  {
+    'kaiuri/nvim-juliana',
+    lazy = false,
+    opts = { --[=[ configuration --]=]
+    },
+    config = true,
+  },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
