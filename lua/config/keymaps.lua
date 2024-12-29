@@ -31,7 +31,7 @@ map('n', '<C-M-k>', '<cmd>cprev<CR>')
 
 -- Debugging nvim config
 map('n', '<space><space>x', '<cmd>source %<CR>', { desc = 'Reload current file' })
-map('n', '<space>x', ':lua<CR>', { desc = 'Execute current line' })
+map('n', '<space>x', ':.lua<CR>', { desc = 'Execute current line' })
 map('v', '<space>x', ':lua<CR>', { desc = 'Exectute selected code in lua' })
 
 return {} -- Return empty table for consistency
