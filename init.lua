@@ -588,6 +588,9 @@ require('lazy').setup({
           lsp_format = lsp_format_opt,
         }
       end,
+      formatters = {
+        stylua = {},
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         vue = { 'eslint_d', 'stylelint' },
