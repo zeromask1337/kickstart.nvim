@@ -488,7 +488,25 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
+        denols = {
+          root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
+          init_options = {
+            enable = true,
+            lint = true,
+            unstable = true,
+            suggest = {
+              imports = {
+                hosts = {
+                  ['https://deno.land'] = true,
+                  ['https://cdn.nest.land'] = true,
+                  ['https://crux.land'] = true,
+                },
+              },
+            },
+          },
+        },
         ts_ls = {
+          root_dir = require('lspconfig.util').root_pattern 'package.json',
           init_options = {
             plugins = {
               {
