@@ -522,6 +522,8 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
+        html = {},
+        cssls = {},
         denols = {
           root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
           init_options = {
@@ -584,11 +586,15 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'html',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
-        ensure_installed = {},
+        ensure_installed = {
+          'cssls',
+          'html',
+        },
         automatic_installation = false,
         handlers = {
           function(server_name)
@@ -692,37 +698,33 @@ require('lazy').setup({
         opts = {},
       },
     },
-    -- @module 'blink.cmp'
-    -- @type blink.cmp.Config
     opts = {
       keymap = {
         preset = 'default',
       },
-
       appearance = {
         nerd_font_variant = 'mono',
       },
-
       completion = {
+        ghost_text = { enabled = true },
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        menu = {
+          draw = {
+            treesitter = { 'lsp' },
+          },
+        },
       },
-
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
-
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
       },
-
       snippets = { preset = 'luasnip' },
-
       fuzzy = { implementation = 'lua' },
-
       signature = { enabled = true },
     },
   },
-
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
