@@ -314,7 +314,7 @@ require('lazy').setup({
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
     'folke/lazydev.nvim',
-    ft = 'lua',
+    ft = 'lua,html,css,svelte',
     opts = {
       library = {
         -- Load luvit types when the `vim.uv` word is found
@@ -576,6 +576,23 @@ require('lazy').setup({
             },
           },
         },
+        svelte = {
+          settings = {
+            svelte = {
+              plugin = {
+                svelte = {
+                  format = {
+                    config = {
+                      svelteBracketNewLine = false,
+                      svelteIndentScriptAndStyle = false,
+                      singleQuote = true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -595,6 +612,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'html',
+        'svelte',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -602,6 +620,7 @@ require('lazy').setup({
         ensure_installed = {
           'cssls',
           'html',
+          'svelte',
         },
         automatic_installation = false,
         handlers = {
