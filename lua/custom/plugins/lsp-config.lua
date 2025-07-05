@@ -163,29 +163,9 @@ return {
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       local capabilities = require('blink.cmp').get_lsp_capabilities()
-
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local svelte_lsp_capabilities = vim.tbl_deep_extend('force', {}, capabilities)
       svelte_lsp_capabilities.workspace = { didChangeWatchedFiles = false }
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
         html = {
           settings = {
             html = {
@@ -227,16 +207,11 @@ return {
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
           settings = {
             Lua = {
               completion = {
                 callSnippet = 'Replace',
               },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -262,54 +237,28 @@ return {
         },
       }
 
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
-      --
-      --  You can press `g?` for help in this menu.
-      --
-      -- `mason` had to be setup earlier: to configure its options see the
-      -- `dependencies` table for `nvim-lspconfig` above.
-      --
-
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'html',
-        'svelte',
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      local server_names = vim.tbl_keys(servers or {})
 
       require('mason-lspconfig').setup {
-        ensure_installed = {
-          'cssls',
-          'html',
-          'svelte',
-        },
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            -- Special handling for ts_ls
-            if server_name == 'ts_ls' then
-              local mason_registry = require 'mason-registry'
-              local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
-
-              -- Update the plugins location in the existing config
-              servers.ts_ls.init_options.plugins[1].location = vue_language_server_path
-            end
-
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        automatic_enable = server_names,
       }
+
+      for server_name, config in pairs(servers) do
+        -- special handling for ts_ls
+        if server_name == 'ts_ls' then
+          local vue_language_server_path = vim.fn.exepath 'vue-language-server' .. '/node_modules/@vue/language-server'
+
+          -- update the plugins location in the existing config
+          config.init_options.plugins[1].location = vue_language_server_path
+        end
+
+        vim.notify('setting up server: ' .. server_name, vim.log.levels.INFO)
+        vim.notify('server config: ' .. vim.inspect(config), vim.log.levels.INFO)
+
+        config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
+
+        vim.lsp.config(server_name, config)
+      end
     end,
   },
 }
