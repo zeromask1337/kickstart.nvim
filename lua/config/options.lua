@@ -5,6 +5,9 @@ local g = vim.g
 g.mapleader = ' '
 g.maplocalleader = ' '
 g.have_nerd_font = false
+g.markdown_fenced_languages = {
+  'ts=typescript',
+}
 
 -- Regular options
 opt.number = true
