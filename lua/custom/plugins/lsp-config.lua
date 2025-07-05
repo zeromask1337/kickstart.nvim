@@ -16,9 +16,8 @@ return {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
-      { 'williamboman/mason.nvim', opts = {} },
+      { 'mason-org/mason.nvim', opts = {} },
       'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       { 'j-hui/fidget.nvim', opts = {} },
       'saghen/blink.cmp',
@@ -177,24 +176,54 @@ return {
         },
         cssls = {},
         denols = {
-          root_dir = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc'),
-          init_options = {
-            enable = true,
-            lint = true,
-            unstable = true,
-            suggest = {
-              imports = {
-                hosts = {
-                  ['https://deno.land'] = true,
-                  ['https://cdn.nest.land'] = true,
-                  ['https://crux.land'] = true,
+          root_dir = function(fname)
+            local util = require 'lspconfig.util'
+            -- Only attach if deno.json/deno.jsonc/deno.lock exists AND no node_modules
+            local deno_root = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')(fname)
+
+            if deno_root then
+              local node_modules = table.concat { deno_root, 'node_modules' }
+              if not vim.uv.fs_stat(node_modules) then
+                return deno_root
+              end
+            end
+            return nil
+          end,
+          single_file_support = false,
+          settings = {
+            deno = {
+              enable = true,
+              lint = true,
+              unstable = true,
+              suggest = {
+                imports = {
+                  hosts = {
+                    ['https://deno.land'] = true,
+                    ['https://cdn.nest.land'] = true,
+                    ['https://crux.land'] = true,
+                  },
                 },
               },
             },
           },
         },
         ts_ls = {
-          root_dir = require('lspconfig.util').root_pattern 'package.json',
+          root_dir = function(fname)
+            local util = require 'lspconfig.util'
+            -- Only attach if package.json exists AND no deno.json
+            local node_root = util.root_pattern 'package.json'(fname)
+
+            if node_root then
+              local deno_json = table.concat { node_root, 'deno.json' }
+              local deno_jsonc = table.concat { node_root, 'deno.jsonc' }
+              local deno_lock = table.concat { node_root, 'deno.lock' }
+              if not vim.uv.fs_stat(deno_json) and not vim.uv.fs_stat(deno_jsonc) and not vim.uv.fs_stat(deno_lock) then
+                return node_root
+              end
+            end
+            return nil
+          end,
+          single_file_support = false,
           init_options = {
             plugins = {
               {
