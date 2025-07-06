@@ -282,7 +282,6 @@ return {
         end
 
         vim.notify('setting up server: ' .. server_name, vim.log.levels.INFO)
-        vim.notify('server config: ' .. vim.inspect(config), vim.log.levels.INFO)
 
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
 
