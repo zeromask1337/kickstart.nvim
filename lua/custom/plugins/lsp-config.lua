@@ -164,6 +164,7 @@ return {
       local capabilities = require('blink.cmp').get_lsp_capabilities()
       local svelte_lsp_capabilities = vim.tbl_deep_extend('force', {}, capabilities)
       svelte_lsp_capabilities.workspace = { didChangeWatchedFiles = false }
+
       local servers = {
         html = {
           settings = {
@@ -280,8 +281,6 @@ return {
           -- update the plugins location in the existing config
           config.init_options.plugins[1].location = vue_language_server_path
         end
-
-        vim.notify('setting up server: ' .. server_name, vim.log.levels.INFO)
 
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
 
