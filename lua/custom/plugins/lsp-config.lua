@@ -17,7 +17,7 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
-      'williamboman/mason-lspconfig.nvim',
+      'mason-org/mason-lspconfig.nvim',
 
       { 'j-hui/fidget.nvim', opts = {} },
       'saghen/blink.cmp',
