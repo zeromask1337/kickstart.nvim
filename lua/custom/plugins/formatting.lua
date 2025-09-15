@@ -35,7 +35,7 @@ return { -- Autoformat
     formatters_by_ft = {
       lua = { 'stylua' },
       vue = { 'eslint_d', 'stylelint' },
-      typescript = { 'eslint_d', 'denols', stop_after_first = true },
+      typescript = { 'eslint_d' },
       -- Conform can also run multiple formatters sequentially
       -- python = { "isort", "black" },
       --
