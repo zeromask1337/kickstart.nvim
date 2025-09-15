@@ -1,6 +1,6 @@
 return {
   -- Detect tabstop and shiftwidth automatically
-  { 'tpope/vim-sleuth' },
+  { 'NMAC427/guess-indent.nvim' },
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
   -- Here is a more advanced example where we pass configuration
