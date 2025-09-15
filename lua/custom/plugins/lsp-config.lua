@@ -165,6 +165,8 @@ return {
       local svelte_lsp_capabilities = vim.tbl_deep_extend('force', {}, capabilities)
       svelte_lsp_capabilities.workspace = { didChangeWatchedFiles = false }
 
+      local ts_filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
+
       local servers = {
         html = {
           settings = {
@@ -176,65 +178,41 @@ return {
           },
         },
         cssls = {},
-        denols = {
-          -- root_dir = function(fname)
-          --   local util = require 'lspconfig.util'
-          --   -- Only attach if deno.json/deno.jsonc/deno.lock exists AND no node_modules
-          --   local deno_root = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')(fname)
-          --
-          --   if deno_root then
-          --     local node_modules = table.concat { deno_root, 'node_modules' }
-          --     if not vim.uv.fs_stat(node_modules) then
-          --       return deno_root
-          --     end
-          --   end
-          --   return nil
-          -- end,
-          single_file_support = false,
+        -- denols = {
+        --   single_file_support = false,
+        --   settings = {
+        --     deno = {
+        --       enable = true,
+        --       lint = true,
+        --       unstable = true,
+        --       suggest = {
+        --         imports = {
+        --           hosts = {
+        --             ['https://deno.land'] = true,
+        --             ['https://cdn.nest.land'] = true,
+        --             ['https://crux.land'] = true,
+        --           },
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
+        vtsls = {
           settings = {
-            deno = {
-              enable = true,
-              lint = true,
-              unstable = true,
-              suggest = {
-                imports = {
-                  hosts = {
-                    ['https://deno.land'] = true,
-                    ['https://cdn.nest.land'] = true,
-                    ['https://crux.land'] = true,
+            vtsls = {
+              tsserver = {
+                globalPlugins = {
+                  {
+                    name = '@vue/typescript-plugin',
+                    location = '', -- filled below
+                    languages = { 'vue' },
+                    configNamespace = 'typescript',
                   },
                 },
               },
             },
           },
-        },
-        ts_ls = {
-          -- root_dir = function(fname)
-          --   local util = require 'lspconfig.util'
-          --   -- Only attach if package.json exists AND no deno.json
-          --   local node_root = util.root_pattern 'package.json'(fname)
-          --
-          --   if node_root then
-          --     local deno_json = table.concat { node_root, 'deno.json' }
-          --     local deno_jsonc = table.concat { node_root, 'deno.jsonc' }
-          --     local deno_lock = table.concat { node_root, 'deno.lock' }
-          --     if not vim.uv.fs_stat(deno_json) and not vim.uv.fs_stat(deno_jsonc) and not vim.uv.fs_stat(deno_lock) then
-          --       return node_root
-          --     end
-          --   end
-          --   return nil
-          -- end,
-          single_file_support = false,
-          init_options = {
-            plugins = {
-              {
-                name = '@vue/typescript-plugin',
-                location = '',
-                languages = { 'vue' },
-              },
-            },
-          },
-          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+          filetypes = ts_filetypes,
         },
         lua_ls = {
           settings = {
@@ -265,6 +243,32 @@ return {
             },
           },
         },
+        -- Volar (vue_ls) for template/CSS; it forwards TS requests to vtsls
+        vue_ls = {
+          on_init = function(client)
+            local unpack = unpack or table.unpack
+            client.handlers['tsserver/request'] = function(_, result, context)
+              local vts = vim.lsp.get_clients({
+                bufnr = context.bufnr,
+                name = 'vtsls',
+              })[1]
+              if not vts then
+                vim.notify('vue_ls: vtsls not running; TS features in .vue will be limited', vim.log.levels.WARN)
+                return
+              end
+              local param = unpack(result)
+              local id, command, payload = unpack(param)
+              vts:exec_cmd({
+                title = 'vue_request_forward',
+                command = 'typescript.tsserverRequest',
+                arguments = { command, payload },
+              }, { bufnr = context.bufnr }, function(_, r)
+                local response = r and r.body
+                client:notify('tsserver/response', { { id, response } })
+              end)
+            end
+          end,
+        },
       }
 
       local server_names = vim.tbl_keys(servers or {})
@@ -275,11 +279,13 @@ return {
 
       for server_name, config in pairs(servers) do
         -- special handling for ts_ls
-        if server_name == 'ts_ls' then
-          local vue_language_server_path = vim.fn.exepath 'vue-language-server' .. '/node_modules/@vue/language-server'
+        if server_name == 'vtsls' then
+          local gp = config.settings and config.settings.vtsls and config.settings.vtsls.tsserver and config.settings.vtsls.tsserver.globalPlugins
+          local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
 
-          -- update the plugins location in the existing config
-          config.init_options.plugins[1].location = vue_language_server_path
+          if gp and gp[1] then
+            gp[1].location = vue_language_server_path
+          end
         end
 
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
