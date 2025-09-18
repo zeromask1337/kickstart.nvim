@@ -11,7 +11,6 @@ g.markdown_fenced_languages = {
 
 -- Regular options
 opt.number = true
-opt.expandtab = true
 opt.relativenumber = true
 opt.mouse = 'a'
 opt.showmode = false
@@ -29,6 +28,10 @@ opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 opt.inccommand = 'split'
 opt.cursorline = true
 opt.scrolloff = 9999
+
+opt.tabstop = 4
+opt.expandtab = true
+opt.shiftwidth = 4
 
 -- Schedule clipboard setting
 vim.schedule(function()
