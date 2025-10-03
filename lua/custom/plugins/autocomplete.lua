@@ -42,7 +42,7 @@ return { -- Autocompletion
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
       menu = {
         draw = {
-          treesitter = { 'lsp' },
+          columns = { { 'kind_icon', 'label', 'label_description', gap = 1 }, { 'kind' } },
         },
       },
     },
@@ -52,8 +52,8 @@ return { -- Autocompletion
         lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
       },
     },
-    snippets = { preset = 'luasnip' },
-    fuzzy = { implementation = 'lua' },
+    snippets = { preset = 'default' },
+    fuzzy = { implementation = 'prefer_rust_with_warning' },
     signature = { enabled = true },
   },
 }
