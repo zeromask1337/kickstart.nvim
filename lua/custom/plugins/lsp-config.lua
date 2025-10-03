@@ -175,25 +175,6 @@ return {
           },
         },
         cssls = {},
-        -- denols = {
-        --   single_file_support = false,
-        --   settings = {
-        --     deno = {
-        --       enable = true,
-        --       lint = true,
-        --       unstable = true,
-        --       suggest = {
-        --         imports = {
-        --           hosts = {
-        --             ['https://deno.land'] = true,
-        --             ['https://cdn.nest.land'] = true,
-        --             ['https://crux.land'] = true,
-        --           },
-        --         },
-        --       },
-        --     },
-        --   },
-        -- },
         vtsls = {
           settings = {
             vtsls = {
