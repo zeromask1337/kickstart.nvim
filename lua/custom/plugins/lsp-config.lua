@@ -240,6 +240,7 @@ return {
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
 
         vim.lsp.config(server_name, config)
+        vim.lsp.enable(server_name)
       end
     end,
   },
