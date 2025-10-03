@@ -221,31 +221,8 @@ return {
             },
           },
         },
-        -- Volar (vue_ls) for template/CSS; it forwards TS requests to vtsls
         vue_ls = {
-          on_init = function(client)
-            local unpack = unpack or table.unpack
-            client.handlers['tsserver/request'] = function(_, result, context)
-              local vts = vim.lsp.get_clients({
-                bufnr = context.bufnr,
-                name = 'vtsls',
-              })[1]
-              if not vts then
-                vim.notify('vue_ls: vtsls not running; TS features in .vue will be limited', vim.log.levels.WARN)
-                return
-              end
-              local param = unpack(result)
-              local id, command, payload = unpack(param)
-              vts:exec_cmd({
-                title = 'vue_request_forward',
-                command = 'typescript.tsserverRequest',
-                arguments = { command, payload },
-              }, { bufnr = context.bufnr }, function(_, r)
-                local response = r and r.body
-                client:notify('tsserver/response', { { id, response } })
-              end)
-            end
-          end,
+          capabilities = capabilities,
         },
       }
 
