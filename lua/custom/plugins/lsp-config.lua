@@ -164,8 +164,6 @@ return {
       local svelte_lsp_capabilities = vim.tbl_deep_extend('force', {}, capabilities)
       svelte_lsp_capabilities.workspace = { didChangeWatchedFiles = false }
 
-      local ts_filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
-
       local servers = {
         html = {
           settings = {
@@ -211,7 +209,7 @@ return {
               },
             },
           },
-          filetypes = ts_filetypes,
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         lua_ls = {
           settings = {
