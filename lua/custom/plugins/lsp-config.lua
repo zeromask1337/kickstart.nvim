@@ -17,7 +17,6 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
-      'mason-org/mason-lspconfig.nvim',
 
       { 'j-hui/fidget.nvim', opts = {} },
       'saghen/blink.cmp',
@@ -269,12 +268,6 @@ return {
             end
           end,
         },
-      }
-
-      local server_names = vim.tbl_keys(servers or {})
-
-      require('mason-lspconfig').setup {
-        automatic_enable = server_names,
       }
 
       for server_name, config in pairs(servers) do
