@@ -193,6 +193,7 @@ return {
           },
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
+        eslint = {},
         lua_ls = {
           settings = {
             Lua = {
