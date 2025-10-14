@@ -163,6 +163,7 @@ return {
       local capabilities = require('blink.cmp').get_lsp_capabilities()
       local svelte_lsp_capabilities = vim.tbl_deep_extend('force', {}, capabilities)
       svelte_lsp_capabilities.workspace = { didChangeWatchedFiles = false }
+      local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
 
       local servers = {
         html = {
@@ -182,7 +183,7 @@ return {
                 globalPlugins = {
                   {
                     name = '@vue/typescript-plugin',
-                    location = '', -- filled below
+                    location = vue_language_server_path,
                     languages = { 'vue' },
                     configNamespace = 'typescript',
                   },
@@ -227,16 +228,6 @@ return {
       }
 
       for server_name, config in pairs(servers) do
-        -- special handling for ts_ls
-        if server_name == 'vtsls' then
-          local gp = config.settings and config.settings.vtsls and config.settings.vtsls.tsserver and config.settings.vtsls.tsserver.globalPlugins
-          local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
-
-          if gp and gp[1] then
-            gp[1].location = vue_language_server_path
-          end
-        end
-
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
 
         vim.lsp.config(server_name, config)
