@@ -194,6 +194,7 @@ return {
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         eslint = {},
+        biome = {},
         lua_ls = {
           settings = {
             Lua = {
