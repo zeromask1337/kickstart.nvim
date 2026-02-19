@@ -6,7 +6,7 @@ g.mapleader = ' '
 g.maplocalleader = ' '
 g.have_nerd_font = false
 g.markdown_fenced_languages = {
-  'ts=typescript',
+    'ts=typescript',
 }
 
 -- Regular options
@@ -32,10 +32,11 @@ opt.scrolloff = 9999
 opt.tabstop = 4
 opt.expandtab = true
 opt.shiftwidth = 4
+opt.winborder = 'rounded'
 
 -- Schedule clipboard setting
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
+    vim.opt.clipboard = 'unnamedplus'
 end)
 
 -- Set UI language
