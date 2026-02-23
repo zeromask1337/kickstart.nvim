@@ -34,4 +34,17 @@ map('n', '<space><space>x', '<cmd>source %<CR>', { desc = 'Reload current file' 
 map('n', '<space>x', ':.lua<CR>', { desc = 'Execute current line' })
 map('v', '<space>x', ':lua<CR>', { desc = 'Exectute selected code in lua' })
 
+-- Lazygit with tmux popups
+map("n", "<leader>gg", function()
+    vim.fn.system("tmux display-popup -E -w 80% -h 80% 'lazygit'")
+end, { desc = 'Open Lazygit' })
+
+map("n", "<leader>gf", function()
+    vim.fn.system("tmux display-popup -E -w 80% -h 80% 'lazygit -f " .. vim.fn.shellescape(vim.fn.expand('%:p')) .. "'")
+end, { desc = 'Lazygit Current File History' })
+
+map("n", "<leader>gl", function()
+    vim.fn.system("tmux display-popup -E -w 80% -h 80% 'lazygit log'")
+end, { desc = 'Lazygit Log (cwd)' })
+
 return {} -- Return empty table for consistency
