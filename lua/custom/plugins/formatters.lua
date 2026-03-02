@@ -36,6 +36,7 @@ return { -- Autoformat
             lua = { 'stylua' },
             vue = { 'eslint_d', 'stylelint', stop_after_first = true },
             typescript = { 'oxlint', 'oxfmt' },
+            json = { 'jq' }
             -- Conform can also run multiple formatters sequentially
             -- python = { "isort", "black" },
             --
