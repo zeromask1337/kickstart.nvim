@@ -9,7 +9,17 @@ return {
     config = function()
         ---@type opencode.Opts
         vim.g.opencode_opts = {
-            -- Your configuration, if any Ñ see `lua/opencode/config.lua`, or "goto definition" on the type or field.
+            provider = {
+                enabled = "tmux",
+                tmux = {
+                    options = '-h -p 40',
+                    -- popup = true,        -- Enable popup
+                    -- popup_width = "40%", -- Try different sizes
+                    -- popup_height = "100%",
+                    -- popup_x = "R",       -- Right-aligned
+                    -- popup_y = "0",
+                }
+            }
         }
 
         -- Required for `opts.events.reload`.
