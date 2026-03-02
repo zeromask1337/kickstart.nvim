@@ -19,6 +19,11 @@ map('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 map('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 map('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
+-- Write and quit operations
+map('n', '<leader>w', '<cmd>:w<CR>', { desc = 'Write the file' })
+map('n', '<leader>wa', '<cmd>:wa<CR>', { desc = 'Write all files' })
+map('n', '<leader>wq', '<cmd>:wq<CR>', { desc = 'Write and quit' })
+
 -- Window navigation
 map('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 map('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
