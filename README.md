@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repo is archived. All new changes to my nvim config will be published [here](https://github.com/zeromask1337/.dotfiles)
+
 # kickstart.nvim
 
 ## Introduction
